@@ -1,19 +1,21 @@
+use crate::chrome::*;
 use crate::print_error::*;
 use std::fs::File;
 use std::io;
 use std::io::prelude::*;
-use crate::chrome::*;
 
 pub fn main_strings(filename: &str, should_have_color_support: bool) -> Result<(), String> {
     let b_arr_size: usize = 0x4000;
-    let mut f = File::open(filename).map_err(|e| format!("Cannot open {}\n\nCaused by:\n {}",filename, e))?;
-    let chrome_instance = ChromeInstance:: new(should_have_color_support);
+    let mut f = File::open(filename)
+        .map_err(|e| format!("Cannot open {}\n\nCaused by:\n {}", filename, e))?;
+    let chrome_instance = ChromeInstance::new(should_have_color_support);
     let mut s = Strings::new(chrome_instance);
     loop {
         let mut b_arr = Vec::with_capacity(b_arr_size);
         let n = Read::by_ref(&mut f)
             .take(b_arr_size as u64)
-            .read_to_end(&mut b_arr).map_err(|e| format!("Cannot read from {}\n\nCaused by:\n {}",filename, e))?;
+            .read_to_end(&mut b_arr)
+            .map_err(|e| format!("Cannot read from {}\n\nCaused by:\n {}", filename, e))?;
         if n == 0 {
             break;
         }
@@ -31,7 +33,7 @@ struct Strings {
     byte_count: u64,
     curr_byte_offset: u64,
     curr_string: String,
-    chrome_instance: ChromeInstance
+    chrome_instance: ChromeInstance,
 }
 
 impl Strings {
@@ -40,7 +42,7 @@ impl Strings {
             byte_count: 0,
             curr_byte_offset: 0,
             curr_string: String::new(),
-            chrome_instance: chrome_instance
+            chrome_instance: chrome_instance,
         }
     }
 
